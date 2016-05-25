@@ -22,7 +22,12 @@ import telepot
 import telepot.async
 import tg_bot
 
-api_key = os.getenv('API_KEY')  # get token from env var.
+# get Telegram token from env var.
+api_key = os.getenv('API_KEY')
+
+irc_serv = os.getenv('IRC_SERV')
+
+
 
 bot = tg_bot.TgBot(api_key)
 loop = asyncio.get_event_loop()
