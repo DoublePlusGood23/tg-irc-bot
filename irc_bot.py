@@ -24,23 +24,26 @@ import string
 
 class IrcBot():
 
-    HOST = irc_server
-    PORT = 6667
+    # connection config
+    host = "localhost"
+    port = 6667
+    chan = "#bot"
 
-    # NICK = "tib"
-    # IDENT = "TgIrcBot"
-    # REALNAME = "TgIrcBot"
-    # MASTER = "dpg"
+    # user config
+    nick = "tib"
+    ident = "TgIrcBot"
+    realname = "Telegram <-> IRC Bot"
+    master = "dpg"
 
     readbuffer = ""
 
     s=socket.socket( )
-    s.connect((HOST, PORT))
+    s.connect((host, port))
 
-    s.send(bytes("NICK " + NICK + "\r\n", "UTF-8"))
-    s.send(bytes("USER %s %s bla :%s\r\n" % (IDENT, HOST, REALNAME), "UTF-8"))
-    s.send(bytes("JOIN #bot\r\n", "UTF-8"));
-    s.send(bytes("PRIVMSG %s :Hello Master\r\n" % MASTER, "UTF-8"))
+    s.send(bytes("NICK " + nick + "\r\n", "UTF-8"))
+    s.send(bytes("USER "+ ident + " " + host + " bla :" + realname + "\r\n", "UTF-8"))
+    s.send(bytes("JOIN " + chan + "\r\n", "UTF-8"));
+    s.send(bytes("PRIVMSG " + master +" :Hello Master\r\n", "UTF-8"))
 
     while 1:
         readbuffer = readbuffer+s.recv(1024).decode("UTF-8")
@@ -54,19 +57,19 @@ class IrcBot():
             if(line[0] == "PING"):
                 s.send(bytes("PONG %s\r\n" % line[1], "UTF-8"))
             if(line[1] == "PRIVMSG"):
-                    sender = ""
-                    for char in line[0]:
-                        if(char == "!"):
-                            break
-                        if(char != ":"):
-                            sender += char
-                            size = len(line)
-                            i = 3
-                            message = ""
-                            while(i < size):
-                                message += line[i] + " "
-                                i = i + 1
-                                message.lstrip(":")
-                                s.send(bytes("PRIVMSG %s %s \r\n" % (sender, message), "UTF-8"))
-                                for index, i in enumerate(line):
-                                    print(line[index])
+                sender = ""
+                for char in line[0]:
+                    if(char == "!"):
+                        break
+                    if(char != ":"):
+                        sender += char
+                size = len(line)
+                i = 3
+                message = ""
+                while(i < size):
+                    message += line[i] + " "
+                    i = i + 1
+                message.lstrip(":")
+                s.send(bytes("PRIVMSG %s %s \r\n" % (sender, message), "UTF-8"))
+        for index, i in enumerate(line):
+            print(line)
